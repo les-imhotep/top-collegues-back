@@ -1,31 +1,39 @@
 package dev.top;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
-import dev.top.entities.Version;
-import dev.top.repos.VersionRepo;
+import dev.top.entities.Collegue;
+import dev.top.repos.CollegueRepo;
 
 @Component
 public class StartupDataInit {
 
-	// bonne pratique : plutot utiliser le constructeur et non faire l'injection
-	// sur le champ qui est privé (compliqué pour les tests unitaires)
-	@Autowired
-	private VersionRepo versionRepo;
+	private CollegueRepo collRepo;
+
+	public StartupDataInit(CollegueRepo collRepo) {
+		super();
+		this.collRepo = collRepo;
+	}
 
 	// on insere un jeu de données a chaque fois que l'appli est lancée par
 	// init()
 	@EventListener(ContextRefreshedEvent.class)
 	public void init() {
 
-		if (this.versionRepo.count() <= 0) {
-			this.versionRepo.save(new Version("v1"));
-			this.versionRepo.save(new Version("v2"));
-			this.versionRepo.save(new Version("v3"));
-			this.versionRepo.save(new Version("v4"));
+		if (this.collRepo.count() <= 0) {
+
+			this.collRepo.save(new Collegue("lana", 100,
+					"https://vignette.wikia.nocookie.net/loveinterest/images/9/9f/Lana_kane.jpg/revision/latest?cb=20140519224029"));
+
+			this.collRepo.save(new Collegue("lana", 100,
+					"https://vignette.wikia.nocookie.net/loveinterest/images/9/9f/Lana_kane.jpg/revision/latest?cb=20140519224029"));
+			/*
+			 * /* this.versionRepo.save(new Version("v2"));
+			 * this.versionRepo.save(new Version("v3"));
+			 * this.versionRepo.save(new Version("v4"));
+			 */
 		}
 
 	}
