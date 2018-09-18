@@ -2,13 +2,21 @@ package dev.top.controller;
 
 import java.util.List;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import dev.top.entities.Collegue;
 import dev.top.repos.CollegueRepo;
 
+@CrossOrigin
 @RestController()
 @RequestMapping("/collegues")
 public class ServiceCtrl {
@@ -20,11 +28,37 @@ public class ServiceCtrl {
 		this.collRepo = collRepo;
 	}
 
+	// *************************************GET***********************************************
+
+	// Exposer le service GET /collegues qui récupère la liste des collègues au
+	// format JSON
 	@GetMapping
 	public List<Collegue> findAll() {
 		return this.collRepo.findAll();
 	}
 
+	// *************************************PATCH***********************************************
+
+	// Exposer un service PATCH /collegues/PSEUDO/ qui permet de mettre à jour
+	// le score d'un collègue
+	@PatchMapping("/{pseudo}")
+	public @ResponseBody ResponseEntity<Collegue> patch(@PathVariable String pseudo, @RequestBody String avis) {
+
+		// L'action AIMER incrémente le score de 10 points
+		if (avis.contains("AIMER")) {
+			Integer score = collRepo.findByPseudo(pseudo).getScore() + 10;
+			collRepo.findByPseudo(pseudo).setScore(score);
+		}
+
+		// L'action DETESTER décrémente le score de 5 points.
+		if (avis.contains("DETESTER")) {
+			Integer score = collRepo.findByPseudo(pseudo).getScore() - 5;
+			collRepo.findByPseudo(pseudo).setScore(score);
+		}
+		return new ResponseEntity<Collegue>(collRepo.findByPseudo(pseudo), HttpStatus.OK);
+	}
+
+	// *************************************POST************************************************
 	/*
 	 * @PostMapping public ResponseEntity<?> creerPizza(@RequestBody Pizza
 	 * pizza) { this.pizzaRepo.save(pizza); return
