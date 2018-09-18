@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import dev.top.entities.Avis;
+import dev.top.entities.AvisView;
 import dev.top.entities.Collegue;
 import dev.top.repos.CollegueRepo;
 
@@ -42,19 +44,26 @@ public class ServiceCtrl {
 	// Exposer un service PATCH /collegues/PSEUDO/ qui permet de mettre à jour
 	// le score d'un collègue
 	@PatchMapping("/{pseudo}")
-	public @ResponseBody ResponseEntity<Collegue> patch(@PathVariable String pseudo, @RequestBody String avis) {
+	public @ResponseBody ResponseEntity<Collegue> patch(@PathVariable String pseudo, @RequestBody AvisView avis) {
+
+		Collegue updatedScore = new Collegue();
 
 		// L'action AIMER incrémente le score de 10 points
-		if (avis.contains("AIMER")) {
+		if (Avis.AIMER.equals(avis.getAction())) {
 			Integer score = collRepo.findByPseudo(pseudo).getScore() + 10;
-			collRepo.findByPseudo(pseudo).setScore(score);
+			updatedScore = collRepo.findByPseudo(pseudo);
+			updatedScore.setScore(score);
 		}
 
 		// L'action DETESTER décrémente le score de 5 points.
-		if (avis.contains("DETESTER")) {
+		if (Avis.DETESTER.equals(avis.getAction())) {
 			Integer score = collRepo.findByPseudo(pseudo).getScore() - 5;
-			collRepo.findByPseudo(pseudo).setScore(score);
+			updatedScore = collRepo.findByPseudo(pseudo);
+			updatedScore.setScore(score);
 		}
+
+		// on va sauvegarder le collègue avec le score updated
+		collRepo.save(updatedScore);
 		return new ResponseEntity<Collegue>(collRepo.findByPseudo(pseudo), HttpStatus.OK);
 	}
 
@@ -64,5 +73,4 @@ public class ServiceCtrl {
 	 * pizza) { this.pizzaRepo.save(pizza); return
 	 * ResponseEntity.status(HttpStatus.CREATED).build(); }
 	 */
-
 }

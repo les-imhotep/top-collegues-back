@@ -24,10 +24,10 @@ public class StartupDataInit {
 
 		if (this.collRepo.count() <= 0) {
 
-			this.collRepo.save(new Collegue("lana", 100,
+			this.collRepo.save(new Collegue("lana44", 100,
 					"https://vignette.wikia.nocookie.net/loveinterest/images/9/9f/Lana_kane.jpg/revision/latest?cb=20140519224029"));
 
-			this.collRepo.save(new Collegue("lana", 100,
+			this.collRepo.save(new Collegue("lana53", 100,
 					"https://vignette.wikia.nocookie.net/loveinterest/images/9/9f/Lana_kane.jpg/revision/latest?cb=20140519224029"));
 			/*
 			 * /* this.versionRepo.save(new Version("v2"));
